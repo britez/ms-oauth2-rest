@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>We - Cencosud - Scotiabank</title>
+
+    <!-- Vendor CSS -->
+    <link href="css/animate.min.css" rel="stylesheet" />
+    <link href="css/material-design-iconic-font.min.css" rel="stylesheet" />
+
+    <!-- CSS -->
+    <link href="css/app.min.1.css" rel="stylesheet" />
+    <link href="css/app.min.2.css" rel="stylesheet" />
+</head>
+
+<body class="login-content">
+<!-- Login -->
+<form method="post" action="/login.do" class="lc-block toggled" id="l-login" autocomplete="off">
+    <div class="has-error hide" id="credentials">
+        <label class="control-label">
+            Username and password are required.
+        </label>
+    </div>
+
+    <div th:if="${error == true}" class="has-error">
+        <label class="control-label">
+            Some of your info isn't correct. Please try again.
+        </label>
+    </div>
+
+    <div th:if="${blocked}" class="has-error">
+        <label class="control-label">
+            This account is blocked. Please contact your administrator.
+        </label>
+    </div>
+    <div class="input-group m-b-20">
+        <span class="input-group-addon"><i class="zmdi zmdi-account" style="padding-right: 6px;"></i></span>
+        <div class="fg-line">
+            <input type="text" name="username" class="form-control" placeholder="Usuario" autocomplete="off" style="padding-left: 3px;"/>
+        </div>
+    </div>
+
+    <div class="input-group m-b-20">
+        <span class="input-group-addon"><i class="zmdi zmdi-key"></i></span>
+        <div class="fg-line">
+            <input type="password" name="password" class="form-control" placeholder="Contraseña" autocomplete="off" style="padding-left: 3px;"/>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    <button type="submit" class="btn btn-login btn-info btn-float"><i class="zmdi zmdi-arrow-forward"></i></button>
+    <div class="color-bar"><div class="color azul"></div><div class="color naranja"></div><div class="color grey"></div><div class="color red"></div></div>
+</form>
+</body>
+</html>

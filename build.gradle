@@ -1,0 +1,60 @@
+buildscript {
+	ext {
+		springBootVersion = '2.1.0.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.rfsc'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+	maven { url "https://repo.spring.io/milestone" }
+}
+
+
+ext {
+	springCloudVersion = 'Greenwich.M3'
+}
+
+dependencies {
+	implementation('org.springframework.boot:spring-boot-starter-actuator')
+	//implementation('org.springframework.boot:spring-boot-starter-jdbc')
+
+	implementation('org.springframework.boot:spring-boot-starter-security')
+	implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
+	implementation('org.springframework.boot:spring-boot-starter-web')
+	compile 'org.webjars:bootstrap:3.3.2'
+
+	implementation('org.springframework.cloud:spring-cloud-starter')
+	implementation('org.springframework.cloud:spring-cloud-starter-config')
+	implementation('org.springframework.cloud:spring-cloud-starter-oauth2')
+	implementation('org.springframework.cloud:spring-cloud-starter-sleuth')
+	runtimeOnly('org.springframework.boot:spring-boot-devtools')
+	compileOnly('org.projectlombok:lombok')
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+	testImplementation('io.projectreactor:reactor-test')
+	testImplementation('org.springframework.security:spring-security-test')
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
+bootRun {
+	jvmArgs = ["-Djava.security.egd=file:/dev/./urandom", "-Dspring.profiles.active=local"]
+}
