@@ -1,0 +1,47 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: ms-oauth2-rest
+  #namespace: microservices
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ms-oauth2-rest
+    spec:
+      containers:
+      - name: ms-oauth2-rest
+        image: registryrfsc.azurecr.io/ms-oauth2-rest:latest
+        imagePullPolicy: Always
+        env:
+          - name: "SPRING_PROFILES_ACTIVE"
+            value: "test"
+          - name: "LOGSTASH_URL"
+            value: "172.26.230.172:5000"
+        ports:
+        - name: http
+          containerPort: 8080
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "0.2"
+          limits:
+            memory: "1024Mi"
+            cpu: "0.5"
+        livenessProbe:
+          httpGet:
+            port: http
+            path: /health
+          initialDelaySeconds: 60
+          periodSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            port: http
+            path: /health
+          initialDelaySeconds: 30
+          periodSeconds: 1
+          failureThreshold: 30
+      imagePullSecrets:
+      - name: cencoreg

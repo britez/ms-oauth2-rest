@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 
 @Configuration
 @EnableAuthorizationServer
@@ -31,18 +32,19 @@ public class AuthorzationServerConfiguration extends AuthorizationServerConfigur
       .secret(passwordEncoder.encode("secret"))
       .authorizedGrantTypes("authorization_code")
       .redirectUris("http://example.com")
-      .resourceIds("oauth_api")
-      .scopes("read");
+      .resourceIds("operaciones_api")
+      .scopes("operaciones");
   }
 
   @Override
   public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
     //nothing
+    oauthServer.tokenKeyAccess("permitAll()").checkTokenAccess("permitAll()");
   }
 
   @Override
   public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-    endpoints.authenticationManager(authenticationManager);
+    endpoints.tokenStore(new InMemoryTokenStore()).authenticationManager(authenticationManager);
   }
 
 }

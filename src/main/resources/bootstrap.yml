@@ -3,5 +3,5 @@ spring:
       name: ms-oauth2-rest
   cloud:
     config:
-      uri: http://localhost:8888
+      uri: http://rfsc-cloud-config-server:8888
 
