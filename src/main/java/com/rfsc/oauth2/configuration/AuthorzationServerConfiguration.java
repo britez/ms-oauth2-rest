@@ -31,7 +31,7 @@ public class AuthorzationServerConfiguration extends AuthorizationServerConfigur
       .withClient("client")
       .secret(passwordEncoder.encode("secret"))
       .authorizedGrantTypes("authorization_code")
-      .redirectUris("http://example.com")
+      .redirectUris("http://172.26.230.165:32026")
       .resourceIds("operaciones_api")
       .scopes("operaciones");
   }
