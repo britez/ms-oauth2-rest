@@ -1,4 +1,4 @@
-package com.rfsc.oauth2.configuration;
+package com.redbee.oauth2.configuration;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;

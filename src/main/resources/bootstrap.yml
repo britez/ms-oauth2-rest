@@ -1,7 +1,0 @@
-spring:
-  application:
-      name: ms-oauth2-rest
-  cloud:
-    config:
-      uri: http://rfsc-cloud-config-server:8888
-

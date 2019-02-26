@@ -1,4 +1,4 @@
-package com.rfsc.oauth2.configuration;
+package com.redbee.oauth2.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +21,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
   @Override
   public void configure(WebSecurity web) throws Exception {
-    web.ignoring().antMatchers("/webjars/**", "/css/**", "/images/**", "/js/**");
+    web.ignoring().antMatchers("/css/**", "/images/**", "/js/**");
   }
 
   @Override

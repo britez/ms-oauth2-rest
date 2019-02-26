@@ -1,13 +1,8 @@
 buildscript {
 	ext {
 		springBootVersion = '2.1.0.RELEASE'
-
-		// Nexus
-		nexusUser = "integracionesuser"
-		nexusPassword = "2yyVb2Yydardxnup"
-		nexusReleaseUrl = "https://jenkins.rfsc-dev.redbee.io/nexus/content/repositories/rfsc-integraciones-release/"
-		nexusSnapshotUrl = 'https://jenkins.rfsc-dev.redbee.io/nexus/content/repositories/rfsc-integraciones/'
 	}
+
 	repositories {
 		mavenCentral()
 		mavenLocal()
@@ -15,39 +10,24 @@ buildscript {
 		maven { url 'http://repo.spring.io/milestone' }
 		maven { url "https://plugins.gradle.org/m2/" }
 	}
+
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-		classpath('se.transmode.gradle:gradle-docker:1.2')
 	}
-}
-
-plugins {
-	// Sonar
-	id "org.sonarqube" version "2.4"
-	// OWASP
-	id 'org.owasp.dependencycheck' version "2.1.1"
-	// Necesario para dependencia maven
-	id "io.spring.dependency-management" version "1.0.3.RELEASE"
 }
 
 apply plugin: 'java'
 apply plugin: 'idea'
-apply plugin: 'eclipse'
-apply plugin: 'maven'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
-apply plugin: 'docker'
-apply plugin: 'jacoco'
-apply plugin: 'groovy'
 
-
-group = 'com.rfsc'
+group = 'com.redbee'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
 bootJar {
 	baseName = 'ms-oauth2-rest'
-	version = System.getProperty('tag', '0.0.1')
+	version = '0.0.1'
 }
 
 repositories {
@@ -57,16 +37,6 @@ repositories {
 	maven { url "https://repo.spring.io/libs-milestone" }
 	maven { url "https://maven.atlassian.com/3rdparty" }
 	maven { url "https://repo.spring.io/milestone" }
-	maven {
-		credentials.username = "${nexusUser}"
-		credentials.password = "${nexusPassword}"
-		url = "${nexusReleaseUrl}"
-	}
-	maven {
-		credentials.username = "${nexusUser}"
-		credentials.password = "${nexusPassword}"
-		url = "${nexusSnapshotUrl}"
-	}
 }
 
 ext {
@@ -74,24 +44,10 @@ ext {
 }
 
 dependencies {
-	implementation('org.springframework.boot:spring-boot-starter-actuator')
-	//implementation('org.springframework.boot:spring-boot-starter-jdbc')
-
 	implementation('org.springframework.boot:spring-boot-starter-security')
 	implementation('org.springframework.boot:spring-boot-starter-thymeleaf')
-	implementation('org.springframework.boot:spring-boot-starter-web')
-	compile 'net.logstash.logback:logstash-logback-encoder:4.11'
-
-	compile 'org.webjars:bootstrap:3.3.2'
-
-	implementation('org.springframework.cloud:spring-cloud-starter')
-	implementation('org.springframework.cloud:spring-cloud-starter-config')
 	implementation('org.springframework.cloud:spring-cloud-starter-oauth2')
-	implementation('org.springframework.cloud:spring-cloud-starter-sleuth')
-	runtimeOnly('org.springframework.boot:spring-boot-devtools')
-	compileOnly('org.projectlombok:lombok')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
-	testImplementation('io.projectreactor:reactor-test')
 	testImplementation('org.springframework.security:spring-security-test')
 }
 
@@ -99,91 +55,6 @@ dependencyManagement {
 	imports {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
 	}
-}
-
-// Sonar settings
-sonarqube {
-	properties {
-		property 'sonar.projectKey', 'ms-operacion-rest'
-		property 'sonar.host.url', 'http://172.26.230.7:9000/sonar' // 'http://172.26.230.7:9000/sonar'
-		property 'sonar.projectName', 'ms-operacion-rest' // Nombre del repos
-		property 'sonar.scm.disabled', 'true'
-		property 'sonar.jacoco.reportPaths', "${buildDir}/jacocoHtml"
-		property 'sonar.exclusions', ['**/gen/**/*', '**/model/**/*']
-		// ** Folder, * Chars, [] Array for many exclusions ||  Ex. '**/puntos/exepciones/*'
-		property "sonar.dependencyCheck.reportPath", "${buildDir}/reports/dependency-check-report.xml"
-		if (project.hasProperty("pullRequestID")) {
-			// sonar-stash
-			property "sonar.analysis.mode", "issues"
-			property "sonar.stash.notification", "true"
-			property "sonar.stash.project", "WE"
-			property "sonar.stash.repository", "ms-operacion-rest"
-			property "sonar.stash.pullrequest.id", "${pullRequestID}"
-			property "sonar.stash.password", "jenkins123456"
-		}
-	}
-}
-
-// OWASP DependencyCheck
-dependencyCheck {
-	format = "XML"
-}
-
-// START SNIPPET jacoco-configuration
-jacoco {
-	toolVersion = "0.8.0"
-}
-
-jacocoTestReport {
-	reports {
-		xml.enabled false
-		csv.enabled false
-		html.destination file("${buildDir}/jacocoHtml")
-	}
-}
-
-test {
-	jacoco {
-		append = false
-		destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
-		classDumpDir = file("$buildDir/jacoco/classpathdumps")
-	}
-}
-
-check.dependsOn jacocoTestReport
-
-if (!project.hasProperty("dockerImgName")) {
-	ext.dockerImgName = "${bootJar.baseName}"
-}
-if (!project.hasProperty("dockerTag")) {
-	ext.dockerTag = "latest"
-}
-if (!project.hasProperty("dockerRegistry")) {
-	ext.dockerRegistry = "docker.dev.redbee.io"
-}
-if (!project.hasProperty("dockerPushToRegistry")) {
-	ext.dockerPushToRegistry = true
-}
-
-task buildDocker(type: Docker, dependsOn: build) {
-	baseImage = "frolvlad/alpine-oraclejdk8:slim"
-	maintainer = "RFSC"
-	hostUrl = "https://docker.dev.redbee.io"
-	push = dockerPushToRegistry.toBoolean()
-	dryRun = false
-	tagVersion = "${dockerTag}"
-	tag = "${dockerRegistry}/${dockerImgName}"
-	addFile {
-		from bootJar
-		rename { "${dockerImgName}.jar" }
-	}
-	addFile("./java-entrypoint.sh", "/java-entrypoint.sh")
-	exposePort(8080)
-
-	entryPoint([
-			"/java-entrypoint.sh",
-			"/${dockerImgName}.jar"
-	])
 }
 
 bootRun {

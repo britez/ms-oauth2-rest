@@ -1,4 +1,4 @@
-package com.rfsc.oauth2.configuration;
+package com.redbee.oauth2.configuration;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +28,12 @@ public class AuthorzationServerConfiguration extends AuthorizationServerConfigur
   public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
     clients
       .inMemory()
-      .withClient("client")
+      .withClient("client_api")
       .secret(passwordEncoder.encode("secret"))
       .authorizedGrantTypes("authorization_code")
-      .redirectUris("http://172.26.230.165:32026")
-      .resourceIds("operaciones_api")
-      .scopes("operaciones");
+      .redirectUris("http://localhost:8080")
+      .resourceIds("client_api")
+      .scopes("read");
   }
 
   @Override

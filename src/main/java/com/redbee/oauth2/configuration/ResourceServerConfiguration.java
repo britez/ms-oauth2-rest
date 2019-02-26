@@ -1,4 +1,4 @@
-package com.rfsc.oauth2.configuration;
+package com.redbee.oauth2.configuration;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,7 +14,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 
   @Override
   public void configure(ResourceServerSecurityConfigurer resources)throws Exception{
-    resources.resourceId("oauth_api");
+    resources.resourceId("client_api");
   }
 
   @Override
@@ -24,7 +24,7 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
         .antMatchers("/api/**")
       .and()
         .authorizeRequests()
-          .antMatchers(HttpMethod.GET, "/**").access("#oauth2.hasScope('api') and hasRole('ROLE_ADMIN')")
+          .antMatchers(HttpMethod.GET, "/**").access("#oauth2.hasScope('read') and hasRole('ROLE_ADMIN')")
           .anyRequest().authenticated()
       .and()
         .exceptionHandling()

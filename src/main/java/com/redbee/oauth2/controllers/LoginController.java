@@ -1,4 +1,4 @@
-package com.rfsc.oauth2.controllers;
+package com.redbee.oauth2.controllers;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

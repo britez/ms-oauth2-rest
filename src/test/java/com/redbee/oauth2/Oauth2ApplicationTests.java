@@ -1,4 +1,4 @@
-package com.rfsc.oauth2;
+package com.redbee.oauth2;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
